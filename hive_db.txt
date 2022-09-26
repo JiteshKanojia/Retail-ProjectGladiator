@@ -32,3 +32,15 @@ CREATE TABLE regions(regionId INT,
 LOAD DATA LOCAL INPATH "/home/ak/project_gladiator/retail/data/region.csv" INTO TABLE regions;
 
 LOAD DATA LOCAL INPATH "/home/ak/project_gladiator/retail/data/nation.csv" INTO TABLE nations;
+
+#Create External Table in Hive
+CREATE EXTERNAL TABLE ext_regions(regionId INT, name STRING, comment STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE
+LOCATION '/external_tables/region'
+TBLPROPERTIES("skip.header.line.count"="1");
+
+#load Data from local csv to external Table
+LOAD DATA LOCAL INPATH '/home/ak/project_gladiator/retail/data/region.csv' INTO TABLE ext_regions;
+
