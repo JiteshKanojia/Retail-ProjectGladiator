@@ -1,0 +1,9 @@
+#Start HDFS
+start-dfs.sh
+start-yarn.sh
+
+#make a hdfs directory before uploading data
+hdfs dfs -mkdir retail
+
+#copy data from localhost to hdfs
+hdfs dfs -copyFromLocal ~/project_gladiator/retail/Retail/* retail

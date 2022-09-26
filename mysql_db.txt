@@ -1,0 +1,19 @@
+mysql -u ak -pak
+
+#create DB
+CREATE DATABASE retail;
+
+#create lineitems table
+CREATE TABLE lineitems(orderID INT, partID INT, supplyID INT, lineNumber INT, quantity INT, extendedPrice FLOAT, discount FLOAT, tax FLOAT, returnFlag VARCHAR(255), lineStatus VARCHAR(255), shipDate DATE, commitDate DATE, receiptDate DATE, shipInstruct VARCHAR(255), shipMode VARCHAR(255), comment TEXT);
+
+#create part table
+CREATE TABLE part(partId INT, name VARCHAR(255), mfgr VARCHAR(255), brand VARCHAR(255), type VARCHAR(255), size INT, container VARCHAR(255), retailPrice FLOAT, comment TEXT);
+
+#### NOTE: files cannot be loaded from anywhere in file system if --secure-file-priv is used. we need to copy or move the data file to '/var/lib/mysql-files/' to access the file.
+##load file from local to mysql DB.
+
+##insert lineitem csv to table
+LOAD DATA INFILE '/var/lib/mysql-files/lineitem.csv' INTO TABLE lineitems FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+
+##insert part csv to mysql DB
+LOAD DATA INFILE '/var/lib/mysql-files/part.csv' INTO TABLE part FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;

@@ -1,0 +1,6 @@
+#sqoop coomand to get data from mysql to hive
+# Documentation available at https://dzone.com/articles/sqoop-import-data-from-mysql-to-hive
+
+#If sqoop fails due to improper HIVE_CONF_DIR config download hive-common-jar from web and put in $SQOOP_HOME/lib directory. 
+
+sqoop import --table part --connect jdbc:mysql://localhost:3306/retail --username ak -P --split-by partId --hive-table retail.ppart --hive-import --hive-overwrite
