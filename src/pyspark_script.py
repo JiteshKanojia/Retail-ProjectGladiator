@@ -41,3 +41,28 @@ hive_df.show(5)
 hive_df.printSchema()
 print("#####"*20)
 
+##Read from mySQL
+#define schema to read
+
+lineitems_schema = StructType() \
+        .add(StructField("orderId", IntegerType(), True)) \
+        .add(StructField("partId", IntegerType(), True)) \
+        .add(StructField("supplyId", IntegerType(), True)) \
+        .add(StructField("lineNumber", IntegerType(), True)) \
+        .add(StructField("quantity", IntegerType(), True)) \
+        .add(StructField("extendedPrice", FloatType(), True)) \
+        .add(StructField("discount", FloatType(), True)) \
+        .add(StructField("tax", FloatType(), True)) \
+        .add(StructField("returnFlag", StringType(), True)) \
+        .add(StructField("lineStatus", StringType(), True)) \
+        .add(StructField("shipDate", DateType(), True)) \
+        .add(StructField("commitDate", DateType(), True)) \
+        .add(StructField("receiptDate", DateType(), True)) \
+        .add(StructField("shipInstruct", StringType(), True)) \
+        .add(StructField("shipMode", StringType(), True)) \
+        .add(StructField("comment", StringType(), True)) 
+#read data from mysql table
+lineitems = spark.read.format("jdbc").option("url","jdbc:mysql://localhost:3306/retail").option("dbtable","lineitems").option("user","ak").option("password","ak").option("schema",lineitems_schema).load()
+
+lineitems.printSchema()
+lineitems.show()
