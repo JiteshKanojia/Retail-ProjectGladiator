@@ -91,6 +91,10 @@ print("###"*25)
 total_discounted_extended_taxed.show()
 
 #Save Transformations to CSV format
-total_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalExtendedPrice")
-total_discounted_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalDiscountedExtendedPrice")  
-total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalDiscountedExtendedTaxedPrice")
+total_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalExtendedPrice")
+total_discounted_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedPrice")  
+total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedTaxedPrice")
+
+#Save Transformations to parquet format
+total_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalExtendedPrice")
+total_discounted_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalDiscountedExtendedPrice")  
