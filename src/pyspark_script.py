@@ -90,3 +90,7 @@ total_discounted_extended_taxed = lineitems.groupBy('returnFlag', 'lineStatus').
 print("###"*25)
 total_discounted_extended_taxed.show()
 
+#Save Transformations to CSV format
+total_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalExtendedPrice")
+total_discounted_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalDiscountedExtendedPrice")  
+total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("header","true").save("../outputData/TotalDiscountedExtendedTaxedPrice")
