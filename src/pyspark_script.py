@@ -97,4 +97,6 @@ total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("he
 
 #Save Transformations to parquet format
 total_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalExtendedPrice")
-total_discounted_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalDiscountedExtendedPrice")  
+total_discounted_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalDiscountedExtendedPrice")
+total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedTaxedPrice")
+
