@@ -1,0 +1,17 @@
+#Start Zookeeper instance by running it in kafka/bin
+./zookeeper-server-start.sh ../config/zookeeper.properties 
+
+#Start kafka server instance by running
+./kafka-server-start.sh ../config/server.properties
+
+#Create a Kafka topic
+./kafka-topics.sh  --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic json_topic
+
+#Command to check created topics
+./kafka-topics.sh --list  --bootstrap-server localhost:9092
+
+#Create a producter in console to publish to data stream
+./kafka-console-producer.sh --broker-list localhost:9092 --topic json_topic
+
+#Create a consumer/subscriber in receive published data stream
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic json_topic --from-beginning
