@@ -81,7 +81,6 @@ lineitems = lineitems.withColumn('discountedExtendedPrice', col('extendedPrice')
 total_discounted_extended_price = lineitems.groupBy('returnFlag', 'lineStatus').agg(round(sum('discountedExtendedPrice'), 2).alias('DiscExtPrice'), sum('quantity').alias('Quantity')).orderBy('returnFlag', 'lineStatus')
 
 print("##"*25)
-print("Discounted Extended Price")
 total_discounted_extended_price.show()
 
 # Discounted Extended Price + Tax
@@ -89,6 +88,5 @@ lineitems = lineitems.withColumn('discWTax',  col('discountedExtendedPrice') + (
 total_discounted_extended_taxed = lineitems.groupBy('returnFlag', 'lineStatus').agg(round(sum('discWTax'), 2).alias('DiscExtWithTax'), sum('quantity').alias('Quantity') ).orderBy('returnFlag', 'lineStatus')
 
 print("###"*25)
-print("Discounted Extended Price + Tax")
 total_discounted_extended_taxed.show()
 
