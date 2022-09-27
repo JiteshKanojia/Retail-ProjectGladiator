@@ -1,9 +1,10 @@
 #Use spark-submit to the the script
 
 import pyspark
+from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.sql import Row
-from pyspark.sql.types import StructType,StructField,DateType,IntegerType,FloatType,StringType
+from pyspark.sql.types import StructType,StructField,DateType,IntegerType,FloatType,StringType,DoubleType
 
 app_name = "Retail"
 master = "local"
@@ -50,9 +51,9 @@ lineitems_schema = StructType() \
         .add(StructField("supplyId", IntegerType(), True)) \
         .add(StructField("lineNumber", IntegerType(), True)) \
         .add(StructField("quantity", IntegerType(), True)) \
-        .add(StructField("extendedPrice", FloatType(), True)) \
-        .add(StructField("discount", FloatType(), True)) \
-        .add(StructField("tax", FloatType(), True)) \
+        .add(StructField("extendedPrice", DoubleType(), True)) \
+        .add(StructField("discount", DoubleType(), True)) \
+        .add(StructField("tax", DoubleType(), True)) \
         .add(StructField("returnFlag", StringType(), True)) \
         .add(StructField("lineStatus", StringType(), True)) \
         .add(StructField("shipDate", DateType(), True)) \
@@ -65,4 +66,29 @@ lineitems_schema = StructType() \
 lineitems = spark.read.format("jdbc").option("url","jdbc:mysql://localhost:3306/retail").option("dbtable","lineitems").option("user","ak").option("password","ak").option("schema",lineitems_schema).load()
 
 lineitems.printSchema()
-lineitems.show()
+lineitems.show(5)
+
+#Transformations for business requirements
+#Total extended price
+total_extended_price = lineitems.groupBy('returnFlag', 'lineStatus').agg(round(sum('extendedPrice'), 2).alias('ExtendedPrice'), sum('quantity').alias('Quantity')).orderBy('returnFlag', 'lineStatus')
+
+total_extended_price.show(5)
+
+
+#Total Discounted Price
+lineitems = lineitems.withColumn('discountedExtendedPrice', col('extendedPrice') - (col('extendedPrice') * col('discount')) )
+
+total_discounted_extended_price = lineitems.groupBy('returnFlag', 'lineStatus').agg(round(sum('discountedExtendedPrice'), 2).alias('DiscExtPrice'), sum('quantity').alias('Quantity')).orderBy('returnFlag', 'lineStatus')
+
+print("##"*25)
+print("Discounted Extended Price")
+total_discounted_extended_price.show()
+
+# Discounted Extended Price + Tax
+lineitems = lineitems.withColumn('discWTax',  col('discountedExtendedPrice') + (col('discountedExtendedPrice') * col('tax')) )
+total_discounted_extended_taxed = lineitems.groupBy('returnFlag', 'lineStatus').agg(round(sum('discWTax'), 2).alias('DiscExtWithTax'), sum('quantity').alias('Quantity') ).orderBy('returnFlag', 'lineStatus')
+
+print("###"*25)
+print("Discounted Extended Price + Tax")
+total_discounted_extended_taxed.show()
+
