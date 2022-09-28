@@ -1,4 +1,5 @@
-#Use spark-submit to the the script
+#NOTE: Use this command to submit spark application
+#    spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0 pyspark_script.py 
 
 import pyspark
 from pyspark.sql.functions import *
@@ -90,13 +91,38 @@ total_discounted_extended_taxed = lineitems.groupBy('returnFlag', 'lineStatus').
 print("###"*25)
 total_discounted_extended_taxed.show()
 
+# Final Transformed Data
+finalData = lineitems.groupBy('returnFlag', 'lineStatus').agg( sum('quantity').alias('Quantity'), round(sum('extendedPrice'), 2).alias('ExtendedPrice'), round(avg('extendedPrice'), 2).alias('AVG_ExtendedPrice'), round(sum('discountedExtendedPrice'), 2).alias('DiscExtPrice'), round(avg('discountedExtendedPrice'), 2).alias('AVG_DiscExtPrice'), round(sum('discWTax'), 2).alias('DiscExtWithTax'), round(avg('discWTax'), 2).alias('AVG_discWTax') ).orderBy('returnFlag', 'lineStatus')
+
+print("###"*25)
+finalData.show()
+
 #Save Transformations to CSV format
 total_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalExtendedPrice")
 total_discounted_extended_price.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedPrice")  
 total_discounted_extended_taxed.write.format("csv").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedTaxedPrice")
+finalData.write.format("csv").mode("overwrite").option("header","true").save('../outputData/csv/FinalTransfomedData')
 
 #Save Transformations to parquet format
 total_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalExtendedPrice")
 total_discounted_extended_price.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalDiscountedExtendedPrice")
-total_discounted_extended_taxed.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/csv/TotalDiscountedExtendedTaxedPrice")
+total_discounted_extended_taxed.write.format("parquet").mode("overwrite").option("header","true").save("../outputData/parquet/TotalDiscountedExtendedTaxedPrice")
+finalData.write.format("parquet").mode("overwrite").option("header","true").save('../outputData/parquet/FinalTransfomedData')
 
+
+
+#Read data from Kafka Instance and print to console
+
+
+stream_df = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "json_topic") \
+    .option("startingOffsets","earliest") \
+    .load()
+
+stream_df.printSchema()
+stream_df = stream_df.selectExpr("key","CAST(value AS STRING)","timestamp")
+query = stream_df.writeStream.trigger(processingTime = "10 seconds").outputMode("append").format("console").start()
+query.awaitTermination()
