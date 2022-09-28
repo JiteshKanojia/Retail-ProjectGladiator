@@ -1,7 +1,7 @@
 #temp files
 .~*
 #output data folder
-#outputData/
+outputData/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
