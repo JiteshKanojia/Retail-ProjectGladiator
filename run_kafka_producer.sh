@@ -2,7 +2,7 @@
 
 if [ $# -ne 2 ];
 then
-  printf "script takes 2 args [1] port number , [2] topic name \n bye \n"
+  printf "script takes 2 args [1] port number , [2] topic name \nbye \n"
   exit 1
 fi
 

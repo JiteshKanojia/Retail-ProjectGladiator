@@ -38,9 +38,9 @@ print("#####"*20)
 
 #hiveQL load data from nations table to df
 spark.sql("use retail")
-hive_df = spark.sql("select * from nations")
-hive_df.show(5)
-hive_df.printSchema()
+nations_df = spark.sql("select * from nations")
+nations_df.show(5)
+nations_df.printSchema()
 print("#####"*20)
 
 ##Read from mySQL
@@ -126,3 +126,5 @@ stream_df.printSchema()
 stream_df = stream_df.selectExpr("key","CAST(value AS STRING)","timestamp")
 query = stream_df.writeStream.trigger(processingTime = "10 seconds").outputMode("append").format("console").start()
 query.awaitTermination()
+
+
